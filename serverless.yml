@@ -35,6 +35,22 @@ functions:
           method: get
           cors: true
 
+  delete:
+    handler: lambdas/delete.delete
+    events:
+      - http:
+          path: emp/{id}
+          method: delete
+          cors: true
+
+  update:
+    handler: lambdas/update.update
+    events:
+      - http:
+          path: emp/{id}
+          method: put
+          cors: true
+
 resources:
   Resources:
     EmployeeTable:
