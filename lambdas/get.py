@@ -6,13 +6,13 @@ table = dynamodb.Table("Employee")
 
 
 def get(event, context):
-    emp = table.get_item(Key={'id': event['pathParameters']['id']})
+    emp = table.get_item(Key={'id': event['pathParameters']['id']})['Item']
     print("EMP:", emp)
     response = {
         "isBase64Encoded": False,
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps(emp['Item'])
+        "body": json.dumps(emp)
     }
 
     return response

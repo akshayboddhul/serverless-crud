@@ -27,6 +27,9 @@ functions:
           path: create
           method: post
           cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: !Ref ApiGatewayAuthorizer
   get:
     handler: lambdas/get.get
     events:
@@ -34,6 +37,9 @@ functions:
           path: emp/{id}
           method: get
           cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: !Ref ApiGatewayAuthorizer
 
   delete:
     handler: lambdas/delete.delete
@@ -42,6 +48,9 @@ functions:
           path: emp/{id}
           method: delete
           cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: !Ref ApiGatewayAuthorizer
 
   update:
     handler: lambdas/update.update
@@ -50,6 +59,9 @@ functions:
           path: emp/{id}
           method: put
           cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId: !Ref ApiGatewayAuthorizer
 
 resources:
   Resources:
@@ -66,3 +78,62 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
+
+    CognitoUserPool:
+      Type: "AWS::Cognito::UserPool"
+      Properties:
+        MfaConfiguration: OFF
+        UserPoolName: my-user-pool
+        UsernameAttributes:
+          - email
+        Schema:
+          - Mutable: false
+            Name: email
+            Required: true
+        AutoVerifiedAttributes:
+          - email
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: false
+            RequireNumbers: true
+            RequireSymbols: false
+            RequireUppercase: true
+    CognitoUserPoolClient:
+      Type: "AWS::Cognito::UserPoolClient"
+      Properties:
+        ClientName: my-user-pool-client
+        GenerateSecret: false
+        UserPoolId: !Ref CognitoUserPool
+        AllowedOAuthScopes:
+          - email
+          - phone
+          - openid
+          - profile
+          - aws.cognito.signin.user.admin
+        PreventUserExistenceErrors: ENABLED
+        AllowedOAuthFlowsUserPoolClient: true
+        CallbackURLs:
+          - https://example.com/callback
+        LogoutURLs:
+          - https://example.com/signout
+        AllowedOAuthFlows:
+          - implicit
+        SupportedIdentityProviders:
+          - COGNITO
+    CognitoUserPoolDomain:
+      Type: "AWS::Cognito::UserPoolDomain"
+      Properties:
+        Domain: cogniserverless
+        UserPoolId: !Ref CognitoUserPool
+    ApiGatewayAuthorizer:
+      DependsOn:
+        - ApiGatewayRestApi
+      Type: AWS::ApiGateway::Authorizer
+      Properties:
+        Name: cognito-authorizer
+        IdentitySource: method.request.header.Authorization
+        RestApiId: !Ref ApiGatewayRestApi
+        Type: COGNITO_USER_POOLS
+        ProviderARNs:
+          - Fn::GetAtt: [CognitoUserPool, Arn]
