@@ -13,7 +13,6 @@ authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
 
 This template demonstrates how to make a simple REST API with Python running on AWS Lambda and API Gateway using the traditional Serverless Framework.
 
-# Serverless Framework Python REST API on AWS
+# Serverless Framework Python REST API on AWS with Cognito Authentication
 
-This template demonstrates how to make a simple REST API with Python running on AWS Lambda and API Gateway using the traditional Serverless Framework.
-
+This template demonstrates how to make a simple REST API with Python running on AWS Lambda and API Gateway using Cognito Authentication in Serverless Framework.
