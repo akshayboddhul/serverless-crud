@@ -30,6 +30,8 @@ functions:
           authorizer:
             type: COGNITO_USER_POOLS
             authorizerId: !Ref ApiGatewayAuthorizer
+            scopes:
+              - email
   get:
     handler: lambdas/get.get
     events:
@@ -40,6 +42,8 @@ functions:
           authorizer:
             type: COGNITO_USER_POOLS
             authorizerId: !Ref ApiGatewayAuthorizer
+            scopes:
+              - email
 
   delete:
     handler: lambdas/delete.delete
@@ -51,6 +55,8 @@ functions:
           authorizer:
             type: COGNITO_USER_POOLS
             authorizerId: !Ref ApiGatewayAuthorizer
+            scopes:
+              - email
 
   update:
     handler: lambdas/update.update
@@ -62,6 +68,8 @@ functions:
           authorizer:
             type: COGNITO_USER_POOLS
             authorizerId: !Ref ApiGatewayAuthorizer
+            scopes:
+              - email
 
 resources:
   Resources:
